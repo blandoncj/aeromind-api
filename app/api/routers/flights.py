@@ -29,7 +29,7 @@ class FlightResponse(BaseModel):
     actual_arrival: datetime | None
 
 
-@router.get("", response_model=list[FlightResponse])
+@router.get("")
 async def search_flights(
     origin: str,
     destination: str,
@@ -44,7 +44,7 @@ async def search_flights(
     return [FlightResponse(**vars(f)) for f in results]
 
 
-@router.get("/{flight_id}", response_model=FlightResponse)
+@router.get("/{flight_id}")
 async def get_flight(
     flight_id: UUID,
     use_case: Annotated[GetFlightUseCase, Depends(get_get_flight_use_case)],

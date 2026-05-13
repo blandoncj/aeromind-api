@@ -15,14 +15,14 @@ _FLIGHT_NUMBER = FlightNumber("AV123")
 
 
 def _make_flight(**overrides) -> Flight:  # type: ignore[no-untyped-def]
-    defaults = dict(
-        flight_number=_FLIGHT_NUMBER,
-        origin=_ORIGIN,
-        destination=_DESTINATION,
-        scheduled_departure=_DEPARTURE,
-        scheduled_arrival=_ARRIVAL,
-        airline="Avianca",
-    )
+    defaults = {
+        "flight_number": _FLIGHT_NUMBER,
+        "origin": _ORIGIN,
+        "destination": _DESTINATION,
+        "scheduled_departure": _DEPARTURE,
+        "scheduled_arrival": _ARRIVAL,
+        "airline": "Avianca",
+    }
     defaults.update(overrides)
     return Flight(**defaults)
 

@@ -10,11 +10,15 @@ from app.application.use_cases.auth.login_user import LoginUserUseCase
 from app.domain.enums.role import Role
 
 
+_TEST_PASSWORD = "PlainPass"  # NOSONAR
+_TEST_HASH = "hashed_password"  # NOSONAR
+
+
 def _make_user(role: Role = Role.PASSENGER, is_active: bool = True) -> MagicMock:
     user = MagicMock()
     user.user_id = uuid4()
     user.email.value = "juan.perez@example.com"
-    user.password_hash = "hashed_password"
+    user.password_hash = _TEST_HASH
     user.role = role
     user.is_active = is_active
     return user
@@ -41,9 +45,9 @@ class TestLoginUserUseCase:
     def test_returns_output_on_valid_credentials(self) -> None:
         user = _make_user()
         use_case, _, _, _ = _make_use_case(user=user)
-        input = LoginUserInput(email="juan.perez@example.com", password="PlainPass")
+        login_input = LoginUserInput(email="juan.perez@example.com", password=_TEST_PASSWORD)
 
-        result = asyncio.run(use_case.execute(input))
+        result = asyncio.run(use_case.execute(login_input))
 
         assert isinstance(result, LoginUserOutput)
         assert result.access_token == "jwt.token.here"
@@ -54,25 +58,25 @@ class TestLoginUserUseCase:
 
     def test_raises_when_user_not_found(self) -> None:
         use_case, _, _, _ = _make_use_case(user=None)
-        input = LoginUserInput(email="noexiste@example.com", password="any")
+        login_input = LoginUserInput(email="noexiste@example.com", password="any")  # NOSONAR
 
         with pytest.raises(InvalidCredentialsError) as exc_info:
-            asyncio.run(use_case.execute(input))
+            asyncio.run(use_case.execute(login_input))
 
         assert exc_info.value.code == "INVALID_CREDENTIALS"
 
     def test_raises_when_password_is_wrong(self) -> None:
         use_case, _, _, _ = _make_use_case(user=_make_user(), password_valid=False)
-        input = LoginUserInput(email="juan.perez@example.com", password="WrongPass")
+        login_input = LoginUserInput(email="juan.perez@example.com", password="WrongPass")  # NOSONAR
 
         with pytest.raises(InvalidCredentialsError):
-            asyncio.run(use_case.execute(input))
+            asyncio.run(use_case.execute(login_input))
 
     def test_does_not_generate_token_on_failed_auth(self) -> None:
         use_case, _, _, token_service = _make_use_case(user=None)
 
         with pytest.raises(InvalidCredentialsError):
-            asyncio.run(use_case.execute(LoginUserInput(email="x@x.com", password="y")))
+            asyncio.run(use_case.execute(LoginUserInput(email="x@x.com", password="y")))  # NOSONAR
 
         token_service.generate.assert_not_called()
 
@@ -80,7 +84,7 @@ class TestLoginUserUseCase:
         user = _make_user(role=Role.OPERATOR)
         use_case, _, _, token_service = _make_use_case(user=user)
 
-        asyncio.run(use_case.execute(LoginUserInput(email="juan.perez@example.com", password="pass")))
+        asyncio.run(use_case.execute(LoginUserInput(email="juan.perez@example.com", password="pass")))  # NOSONAR
 
         token_service.generate.assert_called_once_with(user.user_id, Role.OPERATOR)
 
@@ -88,6 +92,6 @@ class TestLoginUserUseCase:
         user = _make_user()
         use_case, _, hasher, _ = _make_use_case(user=user)
 
-        asyncio.run(use_case.execute(LoginUserInput(email="juan.perez@example.com", password="PlainPass")))
+        asyncio.run(use_case.execute(LoginUserInput(email="juan.perez@example.com", password=_TEST_PASSWORD)))
 
-        hasher.verify.assert_called_once_with("PlainPass", "hashed_password")
+        hasher.verify.assert_called_once_with(_TEST_PASSWORD, _TEST_HASH)

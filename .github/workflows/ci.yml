@@ -32,6 +32,6 @@ jobs:
 
       - name: Coverage
         env:
-          DATABASE_URL: postgresql+asyncpg://aeromind:aeromind@localhost:5432/aeromind
-          JWT_SECRET_KEY: ci-secret-key-not-used-in-production
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: poetry run pytest tests/ --cov=app --cov-report=term-missing

@@ -12,12 +12,12 @@ _TAG = BaggageTag("0014123456")
 
 
 def _make_baggage(**overrides) -> Baggage:  # type: ignore[no-untyped-def]
-    defaults = dict(
-        booking_id=_BOOKING_ID,
-        tag=_TAG,
-        baggage_type=BaggageType.CHECKED,
-        weight_kg=23.0,
-    )
+    defaults = {
+        "booking_id": _BOOKING_ID,
+        "tag": _TAG,
+        "baggage_type": BaggageType.CHECKED,
+        "weight_kg": 23.0,
+    }
     defaults.update(overrides)
     return Baggage(**defaults)
 

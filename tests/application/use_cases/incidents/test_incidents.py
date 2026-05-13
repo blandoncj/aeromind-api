@@ -38,7 +38,7 @@ class TestCreateIncidentUseCase:
     def test_returns_incident_output(self) -> None:
         repo = AsyncMock()
         repo.save.return_value = None
-        input = CreateIncidentInput(
+        create_input = CreateIncidentInput(
             reported_by=uuid4(),
             title="Lost baggage at BOG",
             description="Passenger reports missing bag.",
@@ -46,7 +46,7 @@ class TestCreateIncidentUseCase:
             priority=IncidentPriority.HIGH,
         )
 
-        result = asyncio.run(CreateIncidentUseCase(repo).execute(input))
+        result = asyncio.run(CreateIncidentUseCase(repo).execute(create_input))
 
         assert isinstance(result, IncidentOutput)
         assert result.title == "Lost baggage at BOG"
@@ -57,7 +57,7 @@ class TestCreateIncidentUseCase:
 
     def test_saves_incident_to_repository(self) -> None:
         repo = AsyncMock()
-        input = CreateIncidentInput(
+        create_input = CreateIncidentInput(
             reported_by=uuid4(),
             title="Flight delay report",
             description="Flight AV123 delayed 3 hours.",
@@ -65,14 +65,14 @@ class TestCreateIncidentUseCase:
             priority=IncidentPriority.MEDIUM,
         )
 
-        asyncio.run(CreateIncidentUseCase(repo).execute(input))
+        asyncio.run(CreateIncidentUseCase(repo).execute(create_input))
 
         repo.save.assert_called_once()
 
     def test_links_flight_id_when_provided(self) -> None:
         repo = AsyncMock()
         flight_id = uuid4()
-        input = CreateIncidentInput(
+        create_input = CreateIncidentInput(
             reported_by=uuid4(),
             title="Flight delay",
             description="Delayed.",
@@ -81,7 +81,7 @@ class TestCreateIncidentUseCase:
             flight_id=flight_id,
         )
 
-        result = asyncio.run(CreateIncidentUseCase(repo).execute(input))
+        result = asyncio.run(CreateIncidentUseCase(repo).execute(create_input))
 
         assert result.flight_id == flight_id
 

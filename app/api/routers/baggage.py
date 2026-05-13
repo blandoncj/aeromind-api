@@ -39,7 +39,7 @@ class ReportLostBaggageResponse(BaseModel):
     incident_id: UUID
 
 
-@router.get("/{tag}", response_model=BaggageResponse)
+@router.get("/{tag}")
 async def track_baggage(
     tag: str,
     use_case: Annotated[TrackBaggageUseCase, Depends(get_track_baggage_use_case)],
@@ -48,11 +48,7 @@ async def track_baggage(
     return BaggageResponse(**vars(result))
 
 
-@router.post(
-    "/report-lost",
-    response_model=ReportLostBaggageResponse,
-    status_code=status.HTTP_201_CREATED,
-)
+@router.post("/report-lost", status_code=status.HTTP_201_CREATED)
 async def report_lost_baggage(
     body: ReportLostBaggageRequest,
     use_case: Annotated[ReportLostBaggageUseCase, Depends(get_report_lost_baggage_use_case)],
