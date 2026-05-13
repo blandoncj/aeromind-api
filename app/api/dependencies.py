@@ -14,6 +14,8 @@ from app.application.use_cases.bookings.get_user_bookings import (
     GetUserBookingsUseCase)
 from app.application.use_cases.flights.get_flight import GetFlightUseCase
 from app.application.use_cases.flights.search_flights import SearchFlightsUseCase
+from app.application.use_cases.documents.ingest_document import IngestDocumentUseCase
+from app.application.use_cases.documents.search_documents import SearchDocumentsUseCase
 from app.application.use_cases.incidents.create_incident import (
     CreateIncidentUseCase)
 from app.application.use_cases.incidents.get_incidents import GetIncidentsUseCase
@@ -26,9 +28,12 @@ from app.infrastructure.repositories.sqlalchemy_flight_repository import (
     SqlAlchemyFlightRepository)
 from app.infrastructure.repositories.sqlalchemy_incident_repository import (
     SqlAlchemyIncidentRepository)
+from app.infrastructure.repositories.sqlalchemy_document_repository import (
+    SqlAlchemyDocumentRepository)
 from app.infrastructure.repositories.sqlalchemy_user_repository import (
     SqlAlchemyUserRepository)
 from app.infrastructure.services.bcrypt_password_hasher import BcryptPasswordHasher
+from app.infrastructure.services.gemini_embedding_service import GeminiEmbeddingService
 from app.infrastructure.services.jwt_token_service import JwtTokenService
 
 
@@ -130,3 +135,24 @@ def get_get_incidents_use_case(
     incident_repository: IncidentRepoDep,
 ) -> GetIncidentsUseCase:
     return GetIncidentsUseCase(incident_repository)
+
+
+def _get_document_repo(session: SessionDep) -> SqlAlchemyDocumentRepository:
+    return SqlAlchemyDocumentRepository(session)
+
+
+DocumentRepoDep = Annotated[SqlAlchemyDocumentRepository, Depends(_get_document_repo)]
+
+
+def get_ingest_document_use_case(
+    document_repository: DocumentRepoDep,
+    embedding_service: Annotated[GeminiEmbeddingService, Depends(GeminiEmbeddingService)],
+) -> IngestDocumentUseCase:
+    return IngestDocumentUseCase(document_repository, embedding_service)
+
+
+def get_search_documents_use_case(
+    document_repository: DocumentRepoDep,
+    embedding_service: Annotated[GeminiEmbeddingService, Depends(GeminiEmbeddingService)],
+) -> SearchDocumentsUseCase:
+    return SearchDocumentsUseCase(document_repository, embedding_service)
