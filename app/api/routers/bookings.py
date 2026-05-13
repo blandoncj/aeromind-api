@@ -5,6 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from app.api.auth import CurrentUserDep
 from app.api.dependencies import (
     get_get_booking_use_case,
     get_get_user_bookings_use_case,
@@ -33,6 +34,7 @@ class BookingResponse(BaseModel):
 async def get_booking(
     booking_reference: str,
     use_case: Annotated[GetBookingUseCase, Depends(get_get_booking_use_case)],
+    _: CurrentUserDep,
 ) -> BookingResponse:
     result = await use_case.execute(GetBookingInput(
         booking_reference=booking_reference,
@@ -44,6 +46,7 @@ async def get_booking(
 async def get_user_bookings(
     user_id: UUID,
     use_case: Annotated[GetUserBookingsUseCase, Depends(get_get_user_bookings_use_case)],
+    _: CurrentUserDep,
 ) -> list[BookingResponse]:
     results = await use_case.execute(GetUserBookingsInput(user_id=user_id))
     return [BookingResponse(**vars(b)) for b in results]
