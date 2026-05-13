@@ -14,6 +14,7 @@ from app.application.use_cases.bookings.get_user_bookings import (
     GetUserBookingsUseCase)
 from app.application.use_cases.flights.get_flight import GetFlightUseCase
 from app.application.use_cases.flights.search_flights import SearchFlightsUseCase
+from app.agents.orchestrator import Orchestrator
 from app.application.use_cases.documents.ingest_document import IngestDocumentUseCase
 from app.application.use_cases.documents.search_documents import SearchDocumentsUseCase
 from app.application.use_cases.incidents.create_incident import (
@@ -149,6 +150,10 @@ def get_ingest_document_use_case(
     embedding_service: Annotated[GeminiEmbeddingService, Depends(GeminiEmbeddingService)],
 ) -> IngestDocumentUseCase:
     return IngestDocumentUseCase(document_repository, embedding_service)
+
+
+def get_orchestrator(session: SessionDep) -> Orchestrator:
+    return Orchestrator(session)
 
 
 def get_search_documents_use_case(

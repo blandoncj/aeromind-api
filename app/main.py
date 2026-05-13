@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel
 
-from app.api.routers import auth, baggage, bookings, documents, flights, incidents
+from app.api.routers import auth, baggage, bookings, chat, documents, flights, incidents
 from app.application.exceptions.application_error import ApplicationError
 from app.application.exceptions.baggage_not_found_error import BaggageNotFoundError
 from app.application.exceptions.booking_not_found_error import BookingNotFoundError
@@ -19,6 +19,7 @@ app.include_router(bookings.router)
 app.include_router(baggage.router)
 app.include_router(incidents.router)
 app.include_router(documents.router)
+app.include_router(chat.router)
 
 _NOT_FOUND_ERRORS = (FlightNotFoundError, BaggageNotFoundError, BookingNotFoundError)
 
