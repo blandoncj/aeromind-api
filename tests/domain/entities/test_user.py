@@ -1,10 +1,7 @@
-from datetime import date
-
 from app.domain.entities.user import User
 from app.domain.enums.document_type import DocumentType
 from app.domain.enums.gender import Gender
 from app.domain.enums.role import Role
-from app.domain.value_objects.date_of_birth import DateOfBirth
 from app.domain.value_objects.document import Document
 from app.domain.value_objects.email import Email
 from app.domain.value_objects.nationality import Nationality

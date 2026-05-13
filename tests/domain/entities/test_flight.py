@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from app.domain.entities.flight import Flight
 from app.domain.enums.flight_status import FlightStatus
