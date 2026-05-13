@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from app.domain.exceptions.invalid_seat_number_error import InvalidSeatNumberError
 
 # Seat format: row 1-99 + letter A-F (e.g. 1A, 12C, 34F)
-_SEAT_PATTERN = re.compile(r"^([1-9]|[1-9][0-9])[A-F]$")
+_SEAT_PATTERN = re.compile(r"^([1-9]|[1-9]\d)[A-F]$")
 
 
 @dataclass(frozen=True)

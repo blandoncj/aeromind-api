@@ -44,7 +44,7 @@ class CreateIncidentRequest(BaseModel):
     baggage_id: UUID | None = None
 
 
-@router.post("", response_model=IncidentResponse, status_code=http_status.HTTP_201_CREATED)
+@router.post("", status_code=http_status.HTTP_201_CREATED)
 async def create_incident(
     body: CreateIncidentRequest,
     use_case: Annotated[CreateIncidentUseCase, Depends(get_create_incident_use_case)],
@@ -61,7 +61,7 @@ async def create_incident(
     return IncidentResponse(**vars(result))
 
 
-@router.get("", response_model=list[IncidentResponse])
+@router.get("")
 async def get_incidents(
     use_case: Annotated[GetIncidentsUseCase, Depends(get_get_incidents_use_case)],
     incident_status: IncidentStatus | None = None,

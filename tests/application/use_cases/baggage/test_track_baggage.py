@@ -34,7 +34,7 @@ class TestTrackBaggageUseCase:
         assert isinstance(result, BaggageOutput)
         assert result.tag == "0014123456"
         assert result.status == BaggageStatus.IN_TRANSIT
-        assert result.weight_kg == 23.5
+        assert result.weight_kg == pytest.approx(23.5)
 
     def test_raises_when_baggage_not_found(self) -> None:
         repo = AsyncMock()

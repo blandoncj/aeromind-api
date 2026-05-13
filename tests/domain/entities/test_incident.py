@@ -13,13 +13,13 @@ _BAGGAGE_ID = uuid4()
 
 
 def _make_incident(**overrides) -> Incident:  # type: ignore[no-untyped-def]
-    defaults = dict(
-        reported_by=_USER_ID,
-        title="Maleta no llegó al destino",
-        description="El pasajero reporta que su equipaje no apareció en la cinta.",
-        incident_type=IncidentType.LOST_BAGGAGE,
-        priority=IncidentPriority.HIGH,
-    )
+    defaults = {
+        "reported_by": _USER_ID,
+        "title": "Maleta no llegó al destino",
+        "description": "El pasajero reporta que su equipaje no apareció en la cinta.",
+        "incident_type": IncidentType.LOST_BAGGAGE,
+        "priority": IncidentPriority.HIGH,
+    }
     defaults.update(overrides)
     return Incident(**defaults)
 

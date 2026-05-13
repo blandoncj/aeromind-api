@@ -50,11 +50,7 @@ class LoginResponse(BaseModel):
     role: Role
 
 
-@router.post(
-    "/register",
-    response_model=RegisterResponse,
-    status_code=status.HTTP_201_CREATED,
-)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(
     body: RegisterRequest,
     use_case: Annotated[RegisterUserUseCase, Depends(get_register_use_case)],
@@ -81,7 +77,7 @@ async def register(
     )
 
 
-@router.post("/login", response_model=LoginResponse)
+@router.post("/login")
 async def login(
     body: LoginRequest,
     use_case: Annotated[LoginUserUseCase, Depends(get_login_use_case)],

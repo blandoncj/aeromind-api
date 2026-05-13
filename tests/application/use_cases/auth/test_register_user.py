@@ -11,25 +11,29 @@ from app.domain.enums.gender import Gender
 from app.domain.enums.role import Role
 
 
+_TEST_PASSWORD = "SecurePass123!"  # NOSONAR
+_TEST_HASH = "hashed_password"  # NOSONAR
+
+
 def _make_input(**overrides: object) -> RegisterUserInput:
-    defaults: dict[str, object] = dict(
-        email="juan.perez@example.com",
-        password="SecurePass123!",
-        first_name="Juan",
-        first_lastname="Pérez",
-        document_type=DocumentType.CITIZEN_ID,
-        document_number="1234567890",
-        nationality_code="CO",
-        gender=Gender.MALE,
-        phone_number="+573001234567",
-    )
+    defaults: dict[str, object] = {
+        "email": "juan.perez@example.com",
+        "password": _TEST_PASSWORD,
+        "first_name": "Juan",
+        "first_lastname": "Pérez",
+        "document_type": DocumentType.CITIZEN_ID,
+        "document_number": "1234567890",
+        "nationality_code": "CO",
+        "gender": Gender.MALE,
+        "phone_number": "+573001234567",
+    }
     defaults.update(overrides)
     return RegisterUserInput(**defaults)  # type: ignore[arg-type]
 
 
 def _make_use_case(
     find_result: object = None,
-    hash_return: str = "hashed_password",
+    hash_return: str = _TEST_HASH,
 ) -> tuple[RegisterUserUseCase, AsyncMock, MagicMock]:
     repo = AsyncMock()
     repo.find_by_email.return_value = find_result
@@ -44,9 +48,9 @@ def _make_use_case(
 class TestRegisterUserUseCase:
     def test_returns_output_with_correct_data(self) -> None:
         use_case, _, _ = _make_use_case()
-        input = _make_input()
+        register_input = _make_input()
 
-        result = asyncio.run(use_case.execute(input))
+        result = asyncio.run(use_case.execute(register_input))
 
         assert isinstance(result, RegisterUserOutput)
         assert result.email == "juan.perez@example.com"
@@ -58,9 +62,9 @@ class TestRegisterUserUseCase:
     def test_hashes_password_before_saving(self) -> None:
         use_case, _, hasher = _make_use_case()
 
-        asyncio.run(use_case.execute(_make_input(password="PlainPass")))
+        asyncio.run(use_case.execute(_make_input(password="PlainPass")))  # NOSONAR
 
-        hasher.hash.assert_called_once_with("PlainPass")
+        hasher.hash.assert_called_once_with("PlainPass")  # NOSONAR
 
     def test_saves_user_to_repository(self) -> None:
         use_case, repo, _ = _make_use_case()

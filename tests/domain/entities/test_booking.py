@@ -13,12 +13,12 @@ _REFERENCE = BookingReference("ABC123")
 
 
 def _make_booking(**overrides) -> Booking:  # type: ignore[no-untyped-def]
-    defaults = dict(
-        user_id=_USER_ID,
-        flight_id=_FLIGHT_ID,
-        booking_reference=_REFERENCE,
-        cabin_class=CabinClass.ECONOMY,
-    )
+    defaults = {
+        "user_id": _USER_ID,
+        "flight_id": _FLIGHT_ID,
+        "booking_reference": _REFERENCE,
+        "cabin_class": CabinClass.ECONOMY,
+    }
     defaults.update(overrides)
     return Booking(**defaults)
 

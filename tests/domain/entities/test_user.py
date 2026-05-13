@@ -8,18 +8,21 @@ from app.domain.value_objects.nationality import Nationality
 from app.domain.value_objects.phone_number import PhoneNumber
 
 
+_TEST_HASH = "hashed_password"  # NOSONAR
+
+
 def _make_user(**overrides) -> User:  # type: ignore[no-untyped-def]
-    defaults = dict(
-        document=Document(DocumentType.CITIZEN_ID, "1234567890"),
-        nationality=Nationality("CO"),
-        gender=Gender.MALE,
-        first_name="Juan",
-        first_lastname="Pérez",
-        email=Email("juan.perez@example.com"),
-        password_hash="hashed_password",
-        role=Role.PASSENGER,
-        phone_number=PhoneNumber("+573001234567"),
-    )
+    defaults = {
+        "document": Document(DocumentType.CITIZEN_ID, "1234567890"),
+        "nationality": Nationality("CO"),
+        "gender": Gender.MALE,
+        "first_name": "Juan",
+        "first_lastname": "Pérez",
+        "email": Email("juan.perez@example.com"),
+        "password_hash": _TEST_HASH,
+        "role": Role.PASSENGER,
+        "phone_number": PhoneNumber("+573001234567"),
+    }
     defaults.update(overrides)
     return User(**defaults)
 

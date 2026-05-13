@@ -29,7 +29,7 @@ class BookingResponse(BaseModel):
     created_at: datetime
 
 
-@router.get("/bookings/{booking_reference}", response_model=BookingResponse)
+@router.get("/bookings/{booking_reference}")
 async def get_booking(
     booking_reference: str,
     use_case: Annotated[GetBookingUseCase, Depends(get_get_booking_use_case)],
@@ -40,7 +40,7 @@ async def get_booking(
     return BookingResponse(**vars(result))
 
 
-@router.get("/users/{user_id}/bookings", response_model=list[BookingResponse])
+@router.get("/users/{user_id}/bookings")
 async def get_user_bookings(
     user_id: UUID,
     use_case: Annotated[GetUserBookingsUseCase, Depends(get_get_user_bookings_use_case)],
