@@ -1,5 +1,5 @@
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, call
+from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 import pytest
@@ -37,7 +37,8 @@ class TestReportLostBaggageUseCase:
         use_case, _, _ = _make_use_case(baggage)
 
         result = asyncio.run(
-            use_case.execute(ReportLostBaggageInput(tag="0014123456", reported_by=uuid4()))
+            use_case.execute(ReportLostBaggageInput(
+                tag="0014123456", reported_by=uuid4()))
         )
 
         assert isinstance(result, ReportLostBaggageOutput)
@@ -50,14 +51,16 @@ class TestReportLostBaggageUseCase:
 
         with pytest.raises(BaggageNotFoundError):
             asyncio.run(
-                use_case.execute(ReportLostBaggageInput(tag="0014123456", reported_by=uuid4()))
+                use_case.execute(ReportLostBaggageInput(
+                    tag="0014123456", reported_by=uuid4()))
             )
 
     def test_marks_baggage_status_as_missing(self) -> None:
         baggage = _make_baggage()
         use_case, baggage_repo, _ = _make_use_case(baggage)
 
-        asyncio.run(use_case.execute(ReportLostBaggageInput(tag="0014123456", reported_by=uuid4())))
+        asyncio.run(use_case.execute(ReportLostBaggageInput(
+            tag="0014123456", reported_by=uuid4())))
 
         assert baggage.status == BaggageStatus.MISSING
         baggage_repo.save.assert_called_once_with(baggage)
@@ -65,7 +68,8 @@ class TestReportLostBaggageUseCase:
     def test_creates_incident_with_correct_type_and_priority(self) -> None:
         use_case, _, incident_repo = _make_use_case(_make_baggage())
 
-        asyncio.run(use_case.execute(ReportLostBaggageInput(tag="0014123456", reported_by=uuid4())))
+        asyncio.run(use_case.execute(ReportLostBaggageInput(
+            tag="0014123456", reported_by=uuid4())))
 
         saved_incident = incident_repo.save.call_args[0][0]
         assert saved_incident.incident_type == IncidentType.LOST_BAGGAGE
@@ -76,7 +80,8 @@ class TestReportLostBaggageUseCase:
 
         with pytest.raises(BaggageNotFoundError):
             asyncio.run(
-                use_case.execute(ReportLostBaggageInput(tag="0014123456", reported_by=uuid4()))
+                use_case.execute(ReportLostBaggageInput(
+                    tag="0014123456", reported_by=uuid4()))
             )
 
         incident_repo.save.assert_not_called()

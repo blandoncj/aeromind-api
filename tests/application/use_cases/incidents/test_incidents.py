@@ -3,15 +3,16 @@ from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
-import pytest
 
 from app.application.dtos.incident_dtos import (
     CreateIncidentInput,
     GetIncidentsInput,
     IncidentOutput,
 )
-from app.application.use_cases.incidents.create_incident import CreateIncidentUseCase
-from app.application.use_cases.incidents.get_incidents import GetIncidentsUseCase
+from app.application.use_cases.incidents.create_incident import (
+    CreateIncidentUseCase)
+from app.application.use_cases.incidents.get_incidents import (
+    GetIncidentsUseCase)
 from app.domain.enums.incident_priority import IncidentPriority
 from app.domain.enums.incident_status import IncidentStatus
 from app.domain.enums.incident_type import IncidentType
@@ -88,9 +89,11 @@ class TestCreateIncidentUseCase:
 class TestGetIncidentsUseCase:
     def test_returns_all_incidents_without_filters(self) -> None:
         repo = AsyncMock()
-        repo.find_all.return_value = [_make_incident_mock(), _make_incident_mock()]
+        repo.find_all.return_value = [
+            _make_incident_mock(), _make_incident_mock()]
 
-        result = asyncio.run(GetIncidentsUseCase(repo).execute(GetIncidentsInput()))
+        result = asyncio.run(GetIncidentsUseCase(
+            repo).execute(GetIncidentsInput()))
 
         assert len(result) == 2
         assert all(isinstance(i, IncidentOutput) for i in result)
@@ -120,6 +123,7 @@ class TestGetIncidentsUseCase:
         repo = AsyncMock()
         repo.find_all.return_value = []
 
-        result = asyncio.run(GetIncidentsUseCase(repo).execute(GetIncidentsInput()))
+        result = asyncio.run(GetIncidentsUseCase(
+            repo).execute(GetIncidentsInput()))
 
         assert result == []
