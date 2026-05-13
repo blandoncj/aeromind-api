@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel
 
+from app.api.auth import CurrentUserDep
 from app.api.dependencies import (
     get_report_lost_baggage_use_case,
     get_track_baggage_use_case,
@@ -29,7 +30,6 @@ class BaggageResponse(BaseModel):
 
 class ReportLostBaggageRequest(BaseModel):
     tag: str
-    reported_by: UUID
     description: str | None = None
 
 
@@ -43,6 +43,7 @@ class ReportLostBaggageResponse(BaseModel):
 async def track_baggage(
     tag: str,
     use_case: Annotated[TrackBaggageUseCase, Depends(get_track_baggage_use_case)],
+    _: CurrentUserDep,
 ) -> BaggageResponse:
     result = await use_case.execute(TrackBaggageInput(tag=tag))
     return BaggageResponse(**vars(result))
@@ -52,10 +53,11 @@ async def track_baggage(
 async def report_lost_baggage(
     body: ReportLostBaggageRequest,
     use_case: Annotated[ReportLostBaggageUseCase, Depends(get_report_lost_baggage_use_case)],
+    current_user: CurrentUserDep,
 ) -> ReportLostBaggageResponse:
     result = await use_case.execute(ReportLostBaggageInput(
         tag=body.tag,
-        reported_by=body.reported_by,
+        reported_by=current_user.user_id,
         description=body.description,
     ))
     return ReportLostBaggageResponse(**vars(result))

@@ -6,10 +6,12 @@ from fastapi import APIRouter, Depends
 from fastapi import status as http_status
 from pydantic import BaseModel
 
+from app.api.auth import CurrentUserDep, require_roles
 from app.api.dependencies import (
     get_create_incident_use_case,
     get_get_incidents_use_case,
 )
+from app.domain.enums.role import Role
 from app.application.dtos.incident_dtos import CreateIncidentInput, GetIncidentsInput
 from app.application.use_cases.incidents.create_incident import CreateIncidentUseCase
 from app.application.use_cases.incidents.get_incidents import GetIncidentsUseCase
@@ -35,7 +37,6 @@ class IncidentResponse(BaseModel):
 
 
 class CreateIncidentRequest(BaseModel):
-    reported_by: UUID
     title: str
     description: str
     incident_type: IncidentType
@@ -48,9 +49,10 @@ class CreateIncidentRequest(BaseModel):
 async def create_incident(
     body: CreateIncidentRequest,
     use_case: Annotated[CreateIncidentUseCase, Depends(get_create_incident_use_case)],
+    current_user: CurrentUserDep,
 ) -> IncidentResponse:
     result = await use_case.execute(CreateIncidentInput(
-        reported_by=body.reported_by,
+        reported_by=current_user.user_id,
         title=body.title,
         description=body.description,
         incident_type=body.incident_type,
@@ -61,7 +63,7 @@ async def create_incident(
     return IncidentResponse(**vars(result))
 
 
-@router.get("")
+@router.get("", dependencies=[Depends(require_roles(Role.OPERATOR, Role.ADMIN))])
 async def get_incidents(
     use_case: Annotated[GetIncidentsUseCase, Depends(get_get_incidents_use_case)],
     incident_status: IncidentStatus | None = None,
